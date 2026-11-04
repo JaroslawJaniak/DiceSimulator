@@ -1,12 +1,12 @@
 import "./App.css";
-import NumberList from "./components/NumberList";
-import Pola from "./components/Pola";
+import Ndice10Simulator from "./components/ndice10simulator";
+import PolaKlikane from "./components/Pola";
 
 function App() {
   return (
     <>
-      <Pola />
-      <NumberList />
+      <Ndice10Simulator />
+      <PolaKlikane />
     </>
   );
 }

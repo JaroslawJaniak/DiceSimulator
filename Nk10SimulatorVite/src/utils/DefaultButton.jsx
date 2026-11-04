@@ -1,6 +1,6 @@
 import React from "react";
 
- const DifficultyButton = (props) => {
+ const DefaultButton = (props) => {
   return (
     <button
       className={props.className }
@@ -14,4 +14,4 @@ import React from "react";
   );
 };
 
-export default DifficultyButton;
+export default DefaultButton;
