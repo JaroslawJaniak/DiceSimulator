@@ -10,7 +10,6 @@ type DefaultButtonProps = {
   className: string;
 };
 
-
 function DefaultButton({ handleClick, text, className }: DefaultButtonProps) {
   return (
     <button type="button" onClick={handleClick} className={className}>
@@ -292,7 +291,8 @@ export default function PolaKlikane() {
       <div style={{ marginTop: 20 }}>
         <p>
           The probability of rolling exactly {successNumber} successes with{" "}
-          {diceNumber} dice d{defaultDiceType} and difficulty level {difficultyLevel}:{" "}
+          {diceNumber} dice d{defaultDiceType} and difficulty level{" "}
+          {difficultyLevel}:{" "}
           {probabilityOfMinimumNumberSuccessForNumberDice(
             difficultyLevel,
             diceNumber,
@@ -302,7 +302,8 @@ export default function PolaKlikane() {
         </p>
         <p>
           The probability of rolling exactly {successNumber} successes with{" "}
-          {diceNumber} dice d{defaultDiceType} and difficulty level {difficultyLevel}:{" "}
+          {diceNumber} dice d{defaultDiceType} and difficulty level{" "}
+          {difficultyLevel}:{" "}
           {probabilityOfStrictNumberSucessForNumberDice(
             difficultyLevel,
             diceNumber,
