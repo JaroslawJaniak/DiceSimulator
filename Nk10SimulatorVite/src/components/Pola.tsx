@@ -3,6 +3,10 @@ import { binomialCoefficient } from "../utils/binomialCoefficient";
 import { simulateDiceRolls } from "../utils/simulateDiceRolls";
 import { howManySuccessfulRollsMinimum } from "../utils/howManySuccessfulRollsMinimum";
 import { howManySuccessfulRollsStrict } from "../utils/howManySuccessfulRollsStrict";
+import {
+  isSuccessfulRollMinimum,
+  numberOfSuccessfulRolls,
+} from "../utils/isSuccessfulRollMinimum";
 
 type DefaultButtonProps = {
   handleClick: () => void;
@@ -26,6 +30,13 @@ export default function PolaKlikane() {
   const [dicePoolRoll, setDicePoolRoll] = useState<number[]>([]);
   const [displayedDice, setDisplayedDice] = useState<number[]>([]);
   const [index, setIndex] = useState(0);
+  const [isTestSuccessful, setIsTestSuccessful] = useState(Boolean);
+  const diceTypes = [4, 6, 8, 10, 12, 20, 50, 100];
+  const [activeDiceTypeButtonIndex, setActiveDiceTypeButtonIndex] = useState(1); // Domyślnie aktywna jest k6
+  const [difficultyLevel, setDifficultyLevel] = useState(4);
+  const [successNumber, setSuccessNumber] = useState(3);
+
+  const [defaultDiceType, setDefaultDiceType] = useState(6); // Domyślny typ kości (k6)
 
   const rollDice = () => {
     // Generowanie nowych liczb (przykładowo pięć losowych kostek od 1 do 6)
@@ -39,10 +50,18 @@ export default function PolaKlikane() {
     if (index < dicePoolRoll.length) {
       const timeoutId = setTimeout(() => {
         setDisplayedDice((prev) => [...prev, dicePoolRoll[index]]);
-        setIndex(index + 1);
-      }, 1000); // Czas opóźnienia w milisekundach
+        setIndex((prev) => prev + 1);
+      }, 600);
 
-      return () => clearTimeout(timeoutId); // Czyszczenie timeoutu po odmontowaniu komponentu
+      return () => clearTimeout(timeoutId);
+    } else {
+      const isTestSuccessful = isSuccessfulRollMinimum(
+        dicePoolRoll,
+        difficultyLevel,
+        successNumber,
+      );
+
+      setIsTestSuccessful(isTestSuccessful);
     }
   }, [index, dicePoolRoll]);
 
@@ -53,15 +72,9 @@ export default function PolaKlikane() {
   );
 
   const [diceTypesButton, _setDiceTypesButton] = useState(
-    () => Array.from({ length: 7 }, (_, i) => i < 7), // Używamy funkcji inicjalizującej, aby uniknąć ponownego obliczania przy każdym renderowaniu
+    () => Array.from({ length: 8 }, (_, i) => i < 7), // Używamy funkcji inicjalizującej, aby uniknąć ponownego obliczania przy każdym renderowaniu
   );
-  const diceTypes = [4, 6, 8, 10, 12, 20, 100];
-  const [activeDiceTypeButtonIndex, setActiveDiceTypeButtonIndex] = useState(1); // Domyślnie aktywna jest k6
 
-  const [difficultyLevel, setDifficultyLevel] = useState(4);
-  const [successNumber, setSuccessNumber] = useState(3);
-
-  const [defaultDiceType, setDefaultDiceType] = useState(6); // Domyślny typ kości (k6)
   function updateDefaultDiceType(
     newDefaultDiceType: number,
     newActiveButtonIndex: number,
@@ -251,7 +264,9 @@ export default function PolaKlikane() {
         </div>
         <p style={{ margin: "10px 0 0", fontSize: 16, opacity: 0.75 }}>
           Click on empty fields to fill them. Click on filled fields to empty
-          them.
+          them. Each filled field represents one die in your dice pool. The
+          number of filled fields is the number of dice you will roll. The
+          minimum number of filled fields is 1, and the maximum is 10.
         </p>
       </div>
 
@@ -290,7 +305,7 @@ export default function PolaKlikane() {
 
       <div style={{ marginTop: 20 }}>
         <p>
-          The probability of rolling exactly {successNumber} successes with{" "}
+          The probability of rolling at least {successNumber} successes with{" "}
           {diceNumber} dice d{defaultDiceType} and difficulty level{" "}
           {difficultyLevel}:{" "}
           {probabilityOfMinimumNumberSuccessForNumberDice(
@@ -364,21 +379,36 @@ export default function PolaKlikane() {
 
         <DefaultButton
           handleClick={rollDice}
-          text={`Click to roll ${diceNumber}d${defaultDiceType}`}
-          className={`text-black  bg-gray-300 hover:bg-gray-400 hover:text-white focus:bg-green-700 focus:text-white font-medium rounded text-sm px-5 py-2.5  my-2  mr-2 w-24 dark:bg-gray-300 dark:hover:bg-green-700 dark:focus:ring-green-700 dark:border-gray-700 `}
+          text={`Click to roll ${diceNumber}d${defaultDiceType}
+(difficulty level ${difficultyLevel},  
+${successNumber} or more successes)`}
+          className={`text-white  bg-black hover:bg-gray-900 font-medium rounded text-sm px-5 py-2.5  my-2  mr-2 w-36  `}
         />
       </div>
-      <div style={{ marginTop: 10 }}>
+      <div style={{ marginTop: 10 }} className="text-center inline-block">
         {dicePoolRoll.length > 0 && (
           <>
-            <p>Your last roll:</p>
-            <p>
+            <span>
               {displayedDice.map((dice, idx) => (
-                <span key={idx}>{dice}, </span>
+                <span
+                  key={idx}
+                  className={`bg-black  text-white py-1 px-2 m-1 inline-block ${dice >= difficultyLevel ? "bg-green-700 text-white" : ""} `}
+                >
+                  {dice}
+                </span>
               ))}
-            </p>
+            </span>
           </>
         )}
+      </div>
+      <div>
+        <p style={{ marginTop: 10 }}>
+          Number of successful rolls in the last roll:{" "}
+          {`${numberOfSuccessfulRolls(displayedDice, difficultyLevel)}`}
+        </p>
+        <p style={{ marginTop: 10 }}>
+          Test status: {isTestSuccessful ? "PASSED" : "FAILED"}
+        </p>
       </div>
     </div>
   );
