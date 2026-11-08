@@ -306,8 +306,7 @@ export default function PolaKlikane() {
       <div style={{ marginTop: 20 }}>
         <p>
           The probability of rolling at least {successNumber} successes with{" "}
-          {diceNumber} dice d{defaultDiceType} and difficulty level{" "}
-          {difficultyLevel}:{" "}
+          {diceNumber} dice d{defaultDiceType} and difficulty level {difficultyLevel}:{" "}
           {probabilityOfMinimumNumberSuccessForNumberDice(
             difficultyLevel,
             diceNumber,
